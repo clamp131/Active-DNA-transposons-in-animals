@@ -5,5 +5,6 @@ Codes and commands for detecting active DNA transposons especially TIR TEs in an
 2. Identification of candidate DNA TEs in [de novo assembled genomes](./non_reference_genomes/README.md)
 3. Prediction of [TIR and TSD](./TIR_TSD_prediction/README.md)
 4. Evolutionary modes of [MITEs](./MITE_analyses/README.md)
-   
+5. [Inserion site mapping](./insertion_mapping/README.md) of active TEs
+
 For information inquiry please email Shengjun Tan (tanshengjun@ioz.ac.cn).
