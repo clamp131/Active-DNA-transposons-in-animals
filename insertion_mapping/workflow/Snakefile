@@ -1,0 +1,126 @@
+configfile: "config/config.yaml"
+
+
+pepfile: "config/project_config.yaml"
+
+
+rule mapping_all:
+    input:
+        expand("result/gentsd/{sample}~nostr.bed", sample=pep.sample_table["sample_name"]),
+
+
+rule cutadapt:
+    input:
+        reads1=lambda wildcards: pep.sample_table.loc[wildcards.sample]["clean_reads_1"],
+        reads2=lambda wildcards: pep.sample_table.loc[wildcards.sample]["clean_reads_2"],
+    output:
+        reads1="result/cutadapt/{sample}-1.fq.gz",
+        reads2="result/cutadapt/{sample}-2.fq.gz",
+    log:
+        "log/cutadapt/{sample}.log",
+    params:
+        tir=lambda wildcards: pep.sample_table.loc[wildcards.sample]["TIR"],
+        adapter1=lambda wildcards: pep.sample_table.loc[wildcards.sample]["adapter_1"],
+    conda: "env/cutadapt.yaml"
+    shadow: "shallow"
+    threads: 8
+    shell:
+        r"""
+        cutadapt -e 0 -G TIR_R=^$(echo {params.tir} | tr ATCG TAGC | rev ) '{input.reads1}' '{input.reads2}' -o r1.fq -p r2.fq -j {threads} --discard-untrimmed > {log}
+        cutadapt r1.fq r2.fq -a TIR_F={params.tir} -A adapter1R=$(echo {params.adapter1} | tr ATCG TAGC | rev ) -o {output.reads1} -p {output.reads2} -j {threads} >> {log}
+        """
+
+
+rule novoalign:
+    input:
+        reads1="result/cutadapt/{sample}-1.fq.gz",
+        reads2="result/cutadapt/{sample}-2.fq.gz",
+        genome_ndx=config["genome"]["ndx"],
+        genome_fai=config["genome"]["fai"],
+    output:
+        bam="result/novoalign/{sample}.bam",
+        index="result/novoalign/{sample}.bam.bai",
+    log:
+        parallel="log/novoalign/{sample}.jobs.log",
+        novoalign="log/novoalign/{sample}.log",
+    shadow: "shallow"
+    threads: 12
+    conda: "env/novoalign.yaml"
+    shell:
+        r"""
+        paste -d '\n' <(zcat {input.reads1}) <(zcat {input.reads2}) |
+            parallel --line-buffer --keep-order --pipe -L 8 -j {threads} -N 25000 --joblog {log.parallel} '
+                tempdir=$(mktemp -d --tmpdir=.)
+                awk -v "dir=$tempdir" '\''{{file = NR%2 ? "r1.fq" : "r2.fq"; print > dir "/" file }}'\''
+                novoalign -d {input.genome_ndx} -f ${{tempdir}}/r1.fq ${{tempdir}}/r2.fq -o SAM -r None
+                rm -r $tempdir
+            ' 2> {log.novoalign} |
+            grep ^@ -v |
+            samtools view -t {input.genome_fai} --uncompressed |
+            samtools sort > {output.bam}
+        samtools index {output.bam} {output.index}
+        """
+
+
+rule picard:
+    input:
+        bam="result/novoalign/{sample}.bam",
+    output:
+        bam="result/picard/{sample}.bam",
+        index="result/picard/{sample}.bam.bai",
+    log:
+        metric="log/picard/{sample}.metric.log",
+        error="log/picard/{sample}.log",
+    conda: "env/picard.yaml"
+    resources:
+        load=30,
+    shell:
+        r"""
+        picard MarkDuplicates --INPUT {input} --OUTPUT {output.bam} --METRICS_FILE {log.metric} \
+                --TAG_DUPLICATE_SET_MEMBERS --READ_NAME_REGEX null 2>{log.error}
+        samtools index {output.bam} {output.index}
+        """
+
+
+rule readsfilter:
+    input:
+        "result/picard/{sample}.bam",
+    output:
+        "result/readsfilter/{sample}.tsv",
+    log:
+        "log/readsfilter/{sample}.log",
+    conda: "env/pysam.yaml"
+    script:
+        "script/readsfilter.py"
+
+
+rule gensite:
+    input:
+        "result/readsfilter/{sample}.tsv",
+    output:
+        valid="result/gensite/{sample}~valid.bed",
+        invalid="result/gensite/{sample}~filtered.bed",
+    log:
+        "log/gensite/{sample}.log",
+    conda: "env/tidyverse.yaml"
+    script:
+        "script/gensite.R"
+
+
+rule gentsd:
+    input:
+        insertion_bed="result/gensite/{sample}~valid.bed",
+        genome_fai=config["genome"]["fai"],
+    output:
+        with_strand="result/gentsd/{sample}~all.bed",
+        no_strand="result/gentsd/{sample}~nostr.bed",
+    params:
+        tsdlen=lambda wildcards: pep.sample_table.loc[wildcards.sample]["tsd_length"],
+    conda: "env/bedtools.yaml"
+    shell:
+        r"""
+        bedtools slop -i {input.insertion_bed} -g {input.genome_fai} -s -r {params.tsdlen} -l 0 |
+            awk -v "OFS=\t" '{{print $1, $2, $3, ".", ".", $6}}' |
+            sort -k1,1 -k2,2n -k3,3n | uniq | tee {output.with_strand} |
+            cut -f 1-3 | uniq >{output.no_strand}
+        """

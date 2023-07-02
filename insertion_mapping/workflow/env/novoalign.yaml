@@ -1,0 +1,7 @@
+channels:
+  - bioconda
+  - conda-forge
+dependencies:
+  - novoalign=3.09.04
+  - parallel=20210822
+  - samtools=1.13

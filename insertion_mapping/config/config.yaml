@@ -1,0 +1,4 @@
+genome:
+    fa: input/hg38/hg38.fa
+    fai: input/hg38/hg38.fa.fai
+    ndx: input/hg38/genome.ndx
