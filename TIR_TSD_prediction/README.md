@@ -18,7 +18,7 @@
 
 3. **`perl filter_TSD.pl`**:
 
-   Find the TE copies with perferct TSDs. The TSD length info was from previous literature. For example, hAT-2_AG belonging to hAT superfamily should have 8-bp TSDs.
+   Find the TE copies with perfect TSDs. The TSD length info was from previous literature. For example, hAT-2_AG belonging to hAT superfamily should have 8-bp TSDs.
    
    Example output files of hAT-2_AG are shown in this folder:
    - `1.filter.fas` is the auto and MITE copies;

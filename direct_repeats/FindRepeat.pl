@@ -33,7 +33,7 @@ do {
 } while ($flag);
 
 
-##Read left boudary sequence and compare to the kmer in right boudary sequence (reverse complement)
+##Read left boundary sequence and compare to the kmer in right boundary sequence (reverse complement)
 open (FINB,$ARGV[2]);
 do {
 	$flag = defined ($str=<FINB>);
@@ -69,8 +69,8 @@ do {
 ##col1: gene name
 ##col2: repeat count
 ##col3: repeat seqence
-##col4: position in left boudary sequence
-##col5: position in right boudary seqeunce (reverse complement)
+##col4: position in left boundary sequence
+##col5: position in right boundary sequence (reverse complement)
 foreach my $id (keys %count){
 	foreach my $kmer (sort {$count{$id}{$b} <=> $count{$id}{$a}} keys %{$count{$id}}){
 		$tmp=$id."_".$kmer;

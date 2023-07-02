@@ -1,6 +1,6 @@
 # Direct repeats annotation
 
-The `FindRepeat.pl` script detects repeted k-mers in the transposon end sequneces.
+The `FindRepeat.pl` script detects repeated k-mers in the transposon end sequences.
 
 ```
 Usage:
@@ -8,8 +8,8 @@ Usage:
   perl FindRepeat.pl <k> <right> <left>
 
   <k>       length of the repeat (k-mer size)
-  <right>   sequence of the right end, in fasta format
-  <left>    sequence of the left end, in fasta format
+  <right>   sequence of the right end, in two-line fasta format
+  <left>    sequence of the left end, in two-line fasta format
 
   Note that the fasta header format must be <TE name>-{L,R}
 
@@ -18,8 +18,8 @@ Output format:
   column 1: TE name
   column 2: repeat count
   column 3: repeat seqence
-  column 4: position in left boudary sequence
-  column 5: position in right boudary seqeunce
+  column 4: position in left boundary sequence
+  column 5: position in right boundary sequence
             (reverse complemented)
 ```
 

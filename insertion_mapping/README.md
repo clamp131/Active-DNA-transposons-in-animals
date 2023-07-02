@@ -1,11 +1,11 @@
-# Insersion site mapping workflow
+# Insertion site mapping workflow
 
 This is a [Snakemake](https://github.com/snakemake/snakemake) workflow for recovering the TE insertion sites from sequencing data.
 
 ## Dependencies installation
 
-- [Snakemake](https://github.com/snakemake/snakemake) needs to be installed before runnig the workflow.
-- Other dependencies are defined by [`workflow/env/*.yaml`](workflow/env/) and can be automaticly installed if [Conda](https://github.com/conda/conda) or [Mamba](https://github.com/mamba-org/mamba) is available. Otherwise, manual insallation of these packages are needed. 
+- [Snakemake](https://github.com/snakemake/snakemake) needs to be installed before running the workflow.
+- Other dependencies are defined by [`workflow/env/*.yaml`](workflow/env/) and can be automatically installed if [Conda](https://github.com/conda/conda) or [Mamba](https://github.com/mamba-org/mamba) is available. Otherwise, manual installation of these packages is needed. 
 
 ## Preparing genome files
 

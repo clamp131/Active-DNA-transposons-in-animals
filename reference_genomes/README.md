@@ -21,7 +21,7 @@
 
 6. **GENESCAN**: For TEs from P and PIF/Harbinger superfamilies, where the transposase genes have exon-intron structures, [GENESCAN](http://hollywood.mit.edu/GENSCAN.html) was used to detect ORFs with default parameters.
 
-7. **Pfamscan**: to predict the fuctional domains, install pfamscan through conda and download the [libraries](http://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/).
+7. **Pfamscan**: to predict the functional domains, install pfamscan through conda and download the [libraries](http://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/).
 
    ```bash
    pfam_scan.pl -fasta RB.fas.orf -dir .
