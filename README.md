@@ -4,7 +4,7 @@ Codes and commands for detecting active DNA transposons especially TIR TEs in an
 1. Identification of candidate DNA TEs in [100 animal reference genomes](./reference_genomes/)
 2. Identification of candidate DNA TEs in [de novo assembled genomes](./non_reference_genomes/)
 3. Prediction of [TIR and TSD](./TIR_TSD_prediction/)
-4. Finding [direct repeats](./direct_repeats/) in the transposon end sequences
+4. Finding [direct repeats](./direct_repeats/) at the ends of TEs
 5. Evolutionary modes of [MITEs](./MITE_analyses/)
 6. [Inserion site mapping](./insertion_mapping/) of active TEs
 
