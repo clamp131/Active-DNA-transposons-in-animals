@@ -1,27 +1,9 @@
-# Scripts to identify candidate DNA TEs in de novo assemblied genomes
+# Scripts to identify conserved residues in active DNA TEs
 
-1. Prepare the genome sequence files. For example, `cavefish.fa`.
+1. Collect the transposase sequences as a fasta file. Add the tag "a" ahead of the name of active TEs, "n" ahead of the name of inactive TEs. See the example `Tc1_Tn.fas`.
    
-2. ```bash
-   BuildDatabase -name cavefish -engine ncbi cavefish.fa
-   ```
+2. Generate alignments
+   mafft Tc1_Tn.fasta >Tc1_Tn.fas
 
-3. ```bash
-   RepeatModeler -engine ncbi -pa 30 -database cavefish
-   ```
+3. **`perl conserved_residue.pl`**: find the absolute conserved residues, and report their relative posistions in SB100X. This script does not consider mutations in inactive TEs.
 
-4. **`ORFfinder`**: to predict the transposase genes, download and install [ORFfinder](https://ftp.ncbi.nlm.nih.gov/genomes/TOOLS/ORFfinder/linux-i64/).
-   
-   ```bash
-   ORFfinder -in cavefish-families.fa -s 0 -ml 900 -out cavefish-families.fa.orf -outfmt 0
-   ```
-
-5. **`Pfamscan`**: to predict the functional domains, install pfamscan through conda and download the [libraries](http://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/).
-
-   ```bash
-   pfam_scan.pl -fasta cavefish-families.fa.orf -dir .
-   ```
-
-6. **`perl filter_tnp.pl`**: search for ORFs encoding transposase domains.
-
-7. Manually check the flanking sequences and reconstruct the boundaries of TEs.
