@@ -6,7 +6,7 @@
    
 2. Generate alignments
    
-   mafft Tc1_Tn.fasta >Tc1_Tn.fas
+   ```mafft Tc1_Tn.fasta >Tc1_Tn.fas```
 
 3. **`perl conserved_residue.pl`**: find the absolute conserved residues, and report their relative posistions in SB100X. This script does not consider mutations in inactive TEs.
 
